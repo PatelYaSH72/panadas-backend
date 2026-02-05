@@ -1,35 +1,39 @@
 import "dotenv/config";
-import express from 'express'
-import cors from 'cors'
-import connectDB from './config/mongodb.js'
+import express from "express";
+import cors from "cors";
+import connectDB from "./config/mongodb.js";
 
-import 'dotenv/config'
-import adminRouter from './routes/adminRouter.js'
+import adminRouter from "./routes/adminRouter.js";
 import userRouter from "./routes/userRoutes.js";
 
 import Groq from "groq-sdk";
 
+const app = express();
+const port = process.env.PORT || 4000;
 
-const app = express()
+// 🔥 DB connect
+connectDB();
 
-const port = process.env.PORT || 4000
-connectDB()
-
-app.use(express.json())
-app.use(cors())
+// 🔥 middlewares
+app.use(express.json());
+app.use(cors());
 app.use(express.urlencoded({ extended: true }));
+
+// 🔥 Groq export (for AI)
 export const groq = new Groq({
   apiKey: process.env.GROQ_API_KEY,
 });
 
-app.get('/',(req,res)=>{
-  res.send('API WORKING Great')
-})
-app.use('/api/admin',adminRouter)
-app.use('/api/user',userRouter)
-// app.use('/api/search',globalSearch)
+// 🔥 test route
+app.get("/", (req, res) => {
+  res.send("API WORKING Great 🚀");
+});
 
+// 🔥 routes
+app.use("/api/admin", adminRouter);
+app.use("/api/user", userRouter);
 
-app.listen(port,()=>{
-  console.log("Server started",port)
-})
+// 🔥 IMPORTANT (render production)
+app.listen(port, "0.0.0.0", () => {
+  console.log("Server started on port " + port);
+});
