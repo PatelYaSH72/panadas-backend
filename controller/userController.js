@@ -372,7 +372,7 @@ export const sendEmail = async (req, res) => {
     // 1️⃣ Mail to ADMIN
     await transporter.sendMail({
   from: `"Pandas Learner" <${process.env.EMAIL_USER}>`,
-  to: process.env.ADMIN_EMAIL,
+  to: process.env.ADMIN1_EMAIL,
   subject: `📩 Pandas Learner | ${type.toUpperCase()} - ${subject}`,
   html: `
   <div style="font-family:Arial, sans-serif; background:#f0f4f8; padding:20px">
