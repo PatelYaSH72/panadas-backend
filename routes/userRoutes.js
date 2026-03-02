@@ -19,6 +19,7 @@ import {
 } from "../controller/AiToolsController.js";
 import {
   addResouceReview,
+  categoryData,
   getBookmarkedResources,
   getResourcesData,
   getResourcesToolBySlug,
@@ -51,5 +52,6 @@ userRouter.post("/send-email", authUser, sendEmail);
 userRouter.post("/addResource-review", authUser, addResouceReview);
 userRouter.post("/toggle-bookmark", authUser, toggleBookmark);
 userRouter.get("/bookmarks-data", authUser, bookmarkedData);
+userRouter.get("/categoryranking-data", categoryData);
 
 export default userRouter;

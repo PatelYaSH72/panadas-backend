@@ -16,7 +16,15 @@ connectDB();
 
 // 🔥 middlewares
 app.use(express.json());
-app.use(cors());
+app.use(cors({
+  origin: [
+    "https://pandas-frontend.onrender.com",
+    "http://localhost:5173",
+    "https://pandas-admin.onrender.com",
+    "http://localhost:5174"
+  ],
+  credentials: true
+}));
 app.use(express.urlencoded({ extended: true }));
 
 // 🔥 Groq export (for AI)

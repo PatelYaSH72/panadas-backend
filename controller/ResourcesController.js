@@ -277,5 +277,73 @@ export const toggleBookmark = async (req, res) => {
   }
 };
 
+export const categoryData = async (req, res) => {
+  try {
+
+    // Step 1: Fetch only required fields (performance optimized)
+    const categories = await RsourcesModel.find(
+      { isPublished: true },
+      {
+        name: 1,
+        slug: 1,
+        icon: 1,
+        color: 1,
+        img: 1,
+        reviews: 1,
+        bookmarksCount: 1
+      }
+    ).lean(); // lean for speed
+
+    // Step 2: Calculate ranking for each category
+    const rankedCategories = categories.map((cat) => {
+
+      const reviews = cat.reviews || [];
+      const reviewsCount = reviews.length;
+
+      const averageRating =
+        reviewsCount > 0
+          ? reviews.reduce((acc, r) => acc + r.rating, 0) / reviewsCount
+          : 0;
+
+      // Proper Ranking Formula
+      const rankingScore =
+        (averageRating * 3) +
+        (Math.log(reviewsCount + 1) * 2) +
+        ((cat.bookmarksCount || 0) * 1.5);
+
+      return {
+        _id: cat._id,
+        name: cat.name,
+        slug: cat.slug,
+        icon: cat.icon,
+        color: cat.color,
+        img: cat.img,
+        averageRating: Number(averageRating.toFixed(1)),
+        reviewsCount,
+        bookmarksCount: cat.bookmarksCount || 0,
+        rankingScore
+      };
+    });
+
+    // Step 3: Sort descending (highest ranking first)
+    rankedCategories.sort((a, b) => b.rankingScore - a.rankingScore);
+
+    // Step 4: Take only Top 6
+    const topSix = rankedCategories.slice(0, 6);
+
+    return res.status(200).json({
+      success: true,
+      data: topSix
+    });
+
+  } catch (error) {
+    console.error("Category Data Error:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Failed to fetch categories"
+    });
+  }
+};
+
 
 export default ResourcesData;
