@@ -16,6 +16,8 @@ import {
   getAiLinks,
   getAiTool,
   getAiToolsData,
+  getTrendingAiTools,
+  // toggleSaveAiTool,
 } from "../controller/AiToolsController.js";
 import {
   addResouceReview,
@@ -53,5 +55,6 @@ userRouter.post("/addResource-review", authUser, addResouceReview);
 userRouter.post("/toggle-bookmark", authUser, toggleBookmark);
 userRouter.get("/bookmarks-data", authUser, bookmarkedData);
 userRouter.get("/categoryranking-data", categoryData);
+userRouter.get("/AiTooltranding-data", getTrendingAiTools);
 
 export default userRouter;

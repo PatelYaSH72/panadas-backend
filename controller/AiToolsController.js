@@ -228,4 +228,75 @@ export const getAiLinks = async (req, res) => {
   }
 };
 
+export const getTrendingAiTools = async (req, res) => {
+  try {
+    // 1️⃣ Fetch approved tools
+    const tools = await AiToolsModel.find(
+      { isPublished: "approved" },
+      {
+        name: 1,
+        rating: 1,
+        reviews: 1,
+        savedCount: 1,
+        category: 1,
+        image: 1
+      }
+    ).lean();
+
+    if (!tools.length) {
+      return res.status(200).json({
+        success: true,
+        data: []
+      });
+    }
+
+    // 2️⃣ Calculate global average rating
+    const totalRating = tools.reduce((sum, t) => sum + (t.rating || 0), 0);
+    const globalAvg = totalRating / tools.length;
+
+    const m = 5; // minimum reviews threshold (tuning value)
+
+    // 3️⃣ Ranking Calculation
+    const rankedTools = tools.map((tool) => {
+      const reviewsCount = tool.reviews?.length || 0;
+      const rating = tool.rating || 0;
+      const savedCount = tool.savedCount || 0;
+
+      // Bayesian weighted rating
+      const weightedRating =
+        (rating * reviewsCount + globalAvg * m) /
+        (reviewsCount + m);
+
+      const trendingScore =
+        (weightedRating * 5) +
+        (savedCount * 3) +
+        (Math.log(reviewsCount + 1) * 2);
+
+      return {
+        ...tool,
+        reviewsCount,
+        trendingScore
+      };
+    });
+
+    // 4️⃣ Sort
+    rankedTools.sort((a, b) => b.trendingScore - a.trendingScore);
+
+    // 5️⃣ Return Top 6
+    const topTrending = rankedTools.slice(0, 6);
+
+    return res.status(200).json({
+      success: true,
+      data: topTrending
+    });
+
+  } catch (error) {
+    console.error("Trending Tools Error:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Failed to fetch trending tools"
+    });
+  }
+};
+
 export default AiTools
