@@ -25,6 +25,8 @@ import {
   getBookmarkedResources,
   getResourcesData,
   getResourcesToolBySlug,
+  getTechBySlug,
+  getTechList,
   toggleBookmark,
 } from "../controller/ResourcesController.js";
 import { submitTool } from "../controller/ToolSubmit.controler.js";
@@ -56,5 +58,7 @@ userRouter.post("/toggle-bookmark", authUser, toggleBookmark);
 userRouter.get("/bookmarks-data", authUser, bookmarkedData);
 userRouter.get("/categoryranking-data", categoryData);
 userRouter.get("/AiTooltranding-data", getTrendingAiTools);
+userRouter.get("/list",authUser,getTechList);
+userRouter.get("/:slug", authUser,getTechBySlug);
 
 export default userRouter;

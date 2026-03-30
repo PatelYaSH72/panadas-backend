@@ -345,5 +345,51 @@ export const categoryData = async (req, res) => {
   }
 };
 
+export const getTechList = async (req, res) => {
+  try {
+    const list = await RsourcesModel.find({}, "name icon slug");
+    res.status(200).json({
+      success: true,
+      data: list,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Tech list fetch karne mein error",
+      error: error.message,
+    });
+  }
+};
+
+export const getTechBySlug = async (req, res) => {
+  try {
+    const { slug } = req.params;
+
+    const tech = await RsourcesModel.findOne(
+      { slug: slug },
+      "name icon slug detailed_description key_concepts -_id" // sirf yahi chahiye
+    );
+
+    if (!tech) {
+      return res.status(404).json({
+        success: false,
+        message: "Technology nahi mili",
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      data: tech,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Tech data fetch karne mein error",
+      error: error.message,
+    });
+  }
+};
+
+
 
 export default ResourcesData;
