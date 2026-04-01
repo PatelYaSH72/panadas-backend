@@ -58,7 +58,7 @@ userRouter.post("/toggle-bookmark", authUser, toggleBookmark);
 userRouter.get("/bookmarks-data", authUser, bookmarkedData);
 userRouter.get("/categoryranking-data", categoryData);
 userRouter.get("/AiTooltranding-data", getTrendingAiTools);
-userRouter.get("/list",authUser,getTechList);
-userRouter.get("/:slug", authUser,getTechBySlug);
+userRouter.get("/list",getTechList);
+userRouter.get("/:slug",getTechBySlug);
 
 export default userRouter;
